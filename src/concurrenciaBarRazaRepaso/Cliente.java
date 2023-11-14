@@ -5,11 +5,11 @@ import java.util.Random;
 public class Cliente extends Thread{
 
 	private int id;
-	private Bar bar;
+	private BarSemaphore bar;
 	private String raza;
 	private Random rand = new Random();
 	
-	public Cliente(int id, Bar bar, String raza) {
+	public Cliente(int id, BarSemaphore bar, String raza) {
 		this.id = id;
 		this.bar = bar;
 		this.raza = raza;
