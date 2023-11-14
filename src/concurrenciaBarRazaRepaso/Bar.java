@@ -10,55 +10,66 @@ public class Bar {
 	private ReentrantLock control;
 	private Condition ewok;
 	private Condition gorax;
-	private AtomicInteger aforo;
-	private AtomicInteger total;
-	private AtomicInteger colaEwok;
-	private AtomicInteger colaGorax;
+	private int aforo;
+	private int total;
+	private int colaEwok;
+	private int colaGorax;
 	
 	public Bar() {
 		this.control = new ReentrantLock();
 		this.ewok = control.newCondition();
 		this.gorax = control.newCondition();
 		//
-		this.aforo = new AtomicInteger(5);
-		this.colaEwok = new AtomicInteger(0);
-		this.colaGorax = new AtomicInteger(0);
-		this.total = new AtomicInteger(0);
+		this.aforo = 5;
+		this.colaEwok = 0;
+		this.colaGorax = 0;
+		this.total = 0;
 	}
 	
 	public void entrar(int x, String raza) throws InterruptedException {
 
 		control.lock();
-		while (aforo.get() == total.get()) {
-			if (raza.equals("ewook")) {
-				colaEwok.incrementAndGet();
-				System.err.println("Soy "+ raza + " y estoy a la espera: " + " Ewok: " + colaEwok.get() +" Gorax: " + colaGorax.get());
+		while (!siNoLLenoIncrementarUno()) {
+			if (raza.equals("Ewok")) {
+				colaEwok++;
+				System.err.println("Soy " + raza + " y estoy a la espera");
 				ewok.await();
-			} else {
-				colaGorax.incrementAndGet();
-				System.err.println("Soy "+ raza + " y estoy a la espera: " + " Ewok: " + colaEwok.get() +" Gorax: " + colaGorax.get());
+				colaEwok--;
+			} else if (raza.equals("Gorax")) {
+				colaGorax++;
+				System.err.println("Soy " + raza + " y estoy a la espera");
 				gorax.await();
+				colaGorax--;
+			} else {
+				System.out.println("ni uno ni otro");
 			}
 		}
 		
 		System.out.println("soy " + x + " de la raza " + raza + " y voy a entra al bar");
-		total.incrementAndGet();
+		System.err.println("\tEwok: " + colaEwok + " Gorax: " + colaGorax);
+		//total++;
 		control.unlock();
 
 	}
 
-	public void salir(int x, String raza) {
+	public void salir(int x) {
 		control.lock();
-		System.out.println("cliente " + x + " y de raza " + raza + " sale del bar" + " Ewok: " + colaEwok.get() +" Gorax: " + colaGorax.get());
-		if (colaEwok.get()> 0) {
-			colaEwok.decrementAndGet();
+		System.out.println("cliente " + x + " sale del bar");
+		if (colaEwok > 0) {
 			ewok.signal();
-		} else if(colaGorax.get()> 0) {
-			colaGorax.decrementAndGet();
+		} else{
 			gorax.signal();
 		}
-		total.decrementAndGet();
+		total--;
 		control.unlock();
+	}
+	
+	private boolean siNoLLenoIncrementarUno() {
+		if (aforo > total) {
+			total++;
+			return true;
+		}
+		return false;
 	}
 
 }

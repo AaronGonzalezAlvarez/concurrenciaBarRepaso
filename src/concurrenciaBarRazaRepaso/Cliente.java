@@ -5,11 +5,11 @@ import java.util.Random;
 public class Cliente extends Thread{
 
 	private int id;
-	private BarSemaphore bar;
+	private BarSynchronized bar;
 	private String raza;
 	private Random rand = new Random();
 	
-	public Cliente(int id, BarSemaphore bar, String raza) {
+	public Cliente(int id, BarSynchronized bar, String raza) {
 		this.id = id;
 		this.bar = bar;
 		this.raza = raza;
@@ -19,9 +19,12 @@ public class Cliente extends Thread{
 	public void run() {
 		try {
 			bar.entrar(id, raza);
-			Thread.sleep((1 + rand.nextInt(4)) * 1000);
-			bar.salir(id, raza);
+			Thread.sleep(5000);
+			bar.salir(id);
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
