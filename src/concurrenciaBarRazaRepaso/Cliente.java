@@ -5,11 +5,11 @@ import java.util.Random;
 public class Cliente extends Thread{
 
 	private int id;
-	private BarSynchronized bar;
+	private BarSemaphore bar;
 	private String raza;
 	private Random rand = new Random();
 	
-	public Cliente(int id, BarSynchronized bar, String raza) {
+	public Cliente(int id, BarSemaphore bar, String raza) {
 		this.id = id;
 		this.bar = bar;
 		this.raza = raza;
@@ -18,6 +18,7 @@ public class Cliente extends Thread{
 	
 	public void run() {
 		try {
+			Thread.sleep(rand.nextInt(1000,3000));
 			bar.entrar(id, raza);
 			Thread.sleep(5000);
 			bar.salir(id);

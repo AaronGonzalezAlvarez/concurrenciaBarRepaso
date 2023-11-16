@@ -1,80 +1,66 @@
 package concurrenciaBarRazaRepaso;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 public class BarSynchronized {
-
-	private Object entrada;
-	private Object salida;
+	//funciona
+	private Object o1;
 	private Object ewok;
 	private Object gorax;
-	private AtomicInteger aforo;
-	private AtomicInteger total;
-	private AtomicInteger colaEwok;
-	private AtomicInteger colaGorax;
+	private int aforo;
+	private int total;
+	private int colaEwok;
+	private int colaGorax;
 
 	public BarSynchronized() {
-		this.entrada = new Object();
-		this.salida = new Object();
+		this.o1 = new Object();
 		this.ewok = new Object();
 		this.gorax = new Object();
 		//
-		this.aforo = new AtomicInteger(5);
-		this.colaEwok = new AtomicInteger(0);
-		this.colaGorax = new AtomicInteger(0);
-		this.total = new AtomicInteger(0);
+		this.aforo = 5;
+		this.colaEwok = 0;
+		this.colaGorax = 0;
+		this.total = 0;
+		//
 	}
 
 	public void entrar(int x, String raza) throws InterruptedException {
-		synchronized (entrada) {
-			while (!siNoLLenoIncrementarUno()) {
-				if (raza.equals("Ewok")) {
-					colaEwok.incrementAndGet();
-					System.err.println("Soy " + x + " y de la raza " + raza + " y estoy a la espera");
-					synchronized (ewok) {
-						ewok.wait();
-						colaEwok.decrementAndGet();
-					}
-				} else if (raza.equals("Gorax")) {
-					colaGorax.incrementAndGet();
-					System.err.println("Soy " + x + " y de la raza " + raza + " y estoy a la espera");
-					synchronized (gorax) {
-						gorax.wait();
-						colaGorax.decrementAndGet();
-					}
-				}else {
-					System.out.println("ni uno ni otro");
+		while (!siNoLLenoIncrementarUno()) {
+			if (raza.equals("Ewok")) {
+				synchronized (ewok) {
+					colaEwok++;
+					System.out.println("Soy " + x + " y de la raza " + raza + " y estoy a la espera");
+					ewok.wait();
+					colaEwok--;
 				}
+			} else if (raza.equals("Gorax")) {
+				synchronized (gorax) {
+					colaGorax++;
+					System.out.println("Soy " + x + " y de la raza " + raza + " y estoy a la espera");
+					gorax.wait();
+					colaGorax--;
+				}
+
 			}
 		}
-		System.out.println("soy " + x + " de la raza " + raza + " y voy a entra al bar");
-		System.err.println("\tEwok: " + colaEwok + " Gorax: " + colaGorax);
+		System.out.println("soy " + x + " de la raza " + raza + " y voy a entra al bar\n\tEwok: " + colaEwok + " Gorax: " + colaGorax);
 	}
-	
 
 	public void salir(int x) {
-	    synchronized (salida) {
-	        System.out.println("cliente " + x + " sale del bar");
-	        if (colaEwok.get() > 0) {
-	            synchronized (ewok) {
-	                ewok.notifyAll();
-	            }
-	        } else if (colaGorax.get() > 0) {  // Corregido aquí
-	            synchronized (gorax) {
-	                gorax.notifyAll();
-	            }
-	        }
-	        synchronized (entrada) {
-		        total.decrementAndGet();
+		System.out.println("cliente " + x + " sale del bar");
+		total--;
+		if (colaEwok > 0) {
+			synchronized (ewok) {
+				ewok.notify();
 			}
-	    }
+		} else {
+			synchronized (gorax) {
+				gorax.notify();
+			}
+		}
 	}
 
 	private boolean siNoLLenoIncrementarUno() {
-		if (aforo.get() > total.get()) {
-			total.incrementAndGet();
+		if (aforo > total) {
+			total++;
 			return true;
 		}
 		return false;

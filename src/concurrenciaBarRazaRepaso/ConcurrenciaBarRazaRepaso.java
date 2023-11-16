@@ -5,8 +5,8 @@ public class ConcurrenciaBarRazaRepaso {
 	public static void main(String[] args) {
 		System.out.println("bar");
 		//Bar bar = new Bar();
-		BarSynchronized bar = new BarSynchronized();
-		//BarSemaphore bar = new BarSemaphore();
+		//BarSynchronized bar = new BarSynchronized();
+		BarSemaphore bar = new BarSemaphore();
 		
 		int aux =0;
 		/*for(int x=0; x<5;x++) {

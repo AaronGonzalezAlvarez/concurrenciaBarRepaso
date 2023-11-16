@@ -6,7 +6,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Bar {
-	
+	//funciona
 	private ReentrantLock control;
 	private Condition ewok;
 	private Condition gorax;
@@ -27,17 +27,16 @@ public class Bar {
 	}
 	
 	public void entrar(int x, String raza) throws InterruptedException {
-
 		control.lock();
 		while (!siNoLLenoIncrementarUno()) {
 			if (raza.equals("Ewok")) {
 				colaEwok++;
-				System.err.println("Soy " + raza + " y estoy a la espera");
+				System.out.println("Soy " + raza + " y estoy a la espera");
 				ewok.await();
 				colaEwok--;
 			} else if (raza.equals("Gorax")) {
 				colaGorax++;
-				System.err.println("Soy " + raza + " y estoy a la espera");
+				System.out.println("Soy " + raza + " y estoy a la espera");
 				gorax.await();
 				colaGorax--;
 			} else {
@@ -46,10 +45,9 @@ public class Bar {
 		}
 		
 		System.out.println("soy " + x + " de la raza " + raza + " y voy a entra al bar");
-		System.err.println("\tEwok: " + colaEwok + " Gorax: " + colaGorax);
+		System.out.println("\tEwok: " + colaEwok + " Gorax: " + colaGorax);
 		//total++;
 		control.unlock();
-
 	}
 
 	public void salir(int x) {
