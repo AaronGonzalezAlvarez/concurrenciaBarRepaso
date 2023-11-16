@@ -1,10 +1,8 @@
-package barCana;
-
+package barCana.lock;
 
 public class BarCana {
 
 	public static void main(String[] args) {
-		System.out.println("Con lock");
 		Bar bar = new Bar(10);
 		Camarero camaremo = new Camarero(bar);
 		camaremo.start();

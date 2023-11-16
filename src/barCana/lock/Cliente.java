@@ -1,4 +1,4 @@
-package barCana;
+package barCana.lock;
 
 import java.util.Random;
 
@@ -19,7 +19,7 @@ public class Cliente  extends Thread{
 	
 	public void run() {
 		try {
-			//Thread.sleep(rand.nextInt(1000,3000));
+			Thread.sleep(rand.nextInt(1000,3000));
 			bar.tomarCaña(c,numCanas);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
